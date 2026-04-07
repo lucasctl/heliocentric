@@ -1,75 +1,247 @@
-*, *::before, *::after {
+@import "tailwindcss";
+@import "@phosphor-icons/web/regular";
+
+/* ── Reset & base ─────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
   font-family: system-ui, sans-serif;
-  background: #0a0a0f;
-  color: #e2e2e8;
+  background: #060a13;
+  color: #e2e8f0;
   min-height: 100svh;
-}
-
-main {
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 48px 24px;
-}
-
-h1 {
-  font-size: 2rem;
-  font-weight: 600;
-  margin: 0 0 8px;
-  letter-spacing: -0.5px;
-}
-
-p {
-  color: #9ca3af;
-  margin: 0 0 32px;
-}
-
-label {
-  display: block;
-  font-size: 0.875rem;
-  color: #9ca3af;
-  margin-bottom: 8px;
-}
-
-input[type='date'] {
-  display: block;
-  background: #16171d;
-  border: 1px solid #2e303a;
-  color: #e2e2e8;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 1rem;
-  font-family: inherit;
-  cursor: pointer;
-  margin-bottom: 40px;
+  -webkit-font-smoothing: antialiased;
   color-scheme: dark;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.95rem;
+/* ── Layout ───────────────────────────────────────────────── */
+
+.site-main {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 64px 24px 80px;
 }
 
-th {
-  text-align: left;
+/* ── Header ───────────────────────────────────────────────── */
+
+.site-header {
+  text-align: center;
+  margin-bottom: 52px;
+}
+
+.site-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  letter-spacing: -1.5px;
+  margin: 0 0 12px;
+  color: #fff;
+}
+
+.site-header > p {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* ── Birthday input ───────────────────────────────────────── */
+
+.input-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 52px;
+}
+
+.input-section label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+}
+
+input[type='date'] {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  padding: 10px 18px;
+  font-size: 1rem;
+  font-family: inherit;
   font-weight: 500;
-  color: #9ca3af;
-  font-size: 0.8rem;
+  cursor: pointer;
+  outline: none;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+
+input[type='date']:focus {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ── Planet grid ──────────────────────────────────────────── */
+
+.planet-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .planet-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ── Planet card ──────────────────────────────────────────── */
+
+.planet-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    transform 0.2s;
+}
+
+.planet-card:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.07);
+  transform: translateY(-2px);
+}
+
+/* Thin gradient line across the top edge */
+.card-accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+}
+
+/* Card header: symbol + name on the left, distance badge on the right */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.planet-symbol {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+  /* Ensure the astronomical symbols render from the right font */
+  font-family:
+    'Segoe UI Symbol', 'Apple Symbols', 'Arial Unicode MS', sans-serif;
+}
+
+.planet-name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+
+.planet-distance {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Age section */
+.card-age {
+  margin-bottom: 16px;
+}
+
+.age-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.age-frac {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.age-label {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.28);
+  margin-top: 3px;
+}
+
+/* Card footer */
+.card-footer {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.next-label {
+  font-size: 0.625rem;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 0 12px 12px;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.28);
+  margin-bottom: 5px;
 }
 
-td {
-  padding: 12px;
-  border-top: 1px solid #2e303a;
+.next-date {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 3px;
 }
 
-tr:first-child td {
-  border-top: none;
+.next-countdown {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.next-countdown.is-today {
+  color: #fbbf24;
+  font-weight: 600;
+}
+
+.next-countdown.is-soon {
+  color: #86efac;
 }

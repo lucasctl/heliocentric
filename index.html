@@ -2,12 +2,32 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/heliocentric/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>heliocentric</title>
+    <title>Heliocentric</title>
   </head>
   <body>
-    <div id="app"></div>
+    <main class="site-main">
+      <header class="site-header">
+        <div class="site-badge">
+          <i class="ph ph-planet"></i>
+          Solar system birthday calculator
+        </div>
+        <h1>Heliocentric</h1>
+        <p>Enter your birthday to discover your age across the solar system.</p>
+      </header>
+
+      <div class="input-section">
+        <label for="birthday">
+          <i class="ph ph-cake"></i>
+          Your birthday
+        </label>
+        <input type="date" id="birthday" />
+      </div>
+
+      <div id="results" class="planet-grid"></div>
+    </main>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
