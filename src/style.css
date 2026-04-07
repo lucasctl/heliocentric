@@ -1,247 +1,71 @@
 @import "tailwindcss";
 @import "@phosphor-icons/web/regular";
+/* Tell Tailwind to scan src/ so utility classes in .ts template strings are included */
+@source ".";
 
-/* ── Reset & base ─────────────────────────────────────────── */
+@layer base {
+  body {
+    background: #060a13;
+    color-scheme: dark;
+    -webkit-font-smoothing: antialiased;
+  }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: system-ui, sans-serif;
-  background: #060a13;
-  color: #e2e8f0;
-  min-height: 100svh;
-  -webkit-font-smoothing: antialiased;
-  color-scheme: dark;
-}
-
-/* ── Layout ───────────────────────────────────────────────── */
-
-.site-main {
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 64px 24px 80px;
-}
-
-/* ── Header ───────────────────────────────────────────────── */
-
-.site-header {
-  text-align: center;
-  margin-bottom: 52px;
-}
-
-.site-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 14px;
-  border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.05);
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.4);
-  margin-bottom: 20px;
-}
-
-h1 {
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  font-weight: 700;
-  letter-spacing: -1.5px;
-  margin: 0 0 12px;
-  color: #fff;
-}
-
-.site-header > p {
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 1rem;
-  margin: 0;
-}
-
-/* ── Birthday input ───────────────────────────────────────── */
-
-.input-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 52px;
-}
-
-.input-section label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.45);
-  cursor: pointer;
-}
-
-input[type='date'] {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.9);
-  border-radius: 12px;
-  padding: 10px 18px;
-  font-size: 1rem;
-  font-family: inherit;
-  font-weight: 500;
-  cursor: pointer;
-  outline: none;
-  transition:
-    border-color 0.15s,
-    background 0.15s;
-}
-
-input[type='date']:focus {
-  border-color: rgba(255, 255, 255, 0.25);
-  background: rgba(255, 255, 255, 0.08);
-}
-
-/* ── Planet grid ──────────────────────────────────────────── */
-
-.planet-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-@media (min-width: 768px) {
-  .planet-grid {
-    grid-template-columns: repeat(4, 1fr);
+  /* Astronomical Unicode symbols need a specific font stack to render correctly */
+  .planet-symbol {
+    font-family: 'Segoe UI Symbol', 'Apple Symbols', 'Arial Unicode MS', sans-serif;
   }
 }
 
-/* ── Planet card ──────────────────────────────────────────── */
+@layer components {
+  /* Glassmorphism values are too specific for Tailwind's named scale */
+  .card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  }
 
-.planet-card {
-  position: relative;
-  overflow: hidden;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.04);
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  transition:
-    border-color 0.2s,
-    background 0.2s,
-    transform 0.2s;
-}
+  .card:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.13);
+    transform: translateY(-2px);
+  }
 
-.planet-card:hover {
-  border-color: rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.07);
-  transform: translateY(-2px);
-}
+  /* Birthday table uses sub-pixel borders and specific padding rhythm */
+  .birthday-table th {
+    font-size: 0.65rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.3);
+    padding: 0 14px 10px;
+    text-align: left;
+    white-space: nowrap;
+  }
 
-/* Thin gradient line across the top edge */
-.card-accent {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-}
+  .birthday-table td {
+    padding: 9px 14px;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.7);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
 
-/* Card header: symbol + name on the left, distance badge on the right */
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 16px;
-}
+  .birthday-table tr:first-child td {
+    border-top: none;
+  }
 
-.planet-symbol {
-  display: block;
-  font-size: 2rem;
-  font-weight: 700;
-  line-height: 1;
-  margin-bottom: 4px;
-  /* Ensure the astronomical symbols render from the right font */
-  font-family:
-    'Segoe UI Symbol', 'Apple Symbols', 'Arial Unicode MS', sans-serif;
-}
+  /* Close button for the detail panel — hover handled here since hover: variants
+     aren't reliable from JS template-string scanning */
+  .detail-close {
+    color: rgba(255, 255, 255, 0.3);
+    transition: color 0.15s;
+    padding: 4px;
+    line-height: 1;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
 
-.planet-name {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0;
-}
-
-.planet-distance {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 9999px;
-  font-size: 0.7rem;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-/* Age section */
-.card-age {
-  margin-bottom: 16px;
-}
-
-.age-number {
-  font-size: 2.5rem;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -1px;
-}
-
-.age-frac {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.35);
-}
-
-.age-label {
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.28);
-  margin-top: 3px;
-}
-
-/* Card footer */
-.card-footer {
-  margin-top: auto;
-  padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
-}
-
-.next-label {
-  font-size: 0.625rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: rgba(255, 255, 255, 0.28);
-  margin-bottom: 5px;
-}
-
-.next-date {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 3px;
-}
-
-.next-countdown {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.3);
-}
-
-.next-countdown.is-today {
-  color: #fbbf24;
-  font-weight: 600;
-}
-
-.next-countdown.is-soon {
-  color: #86efac;
+  .detail-close:hover {
+    color: rgba(255, 255, 255, 0.7);
+  }
 }

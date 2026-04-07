@@ -2,8 +2,7 @@ import dayjs from 'dayjs'
 import type { Dayjs } from 'dayjs'
 
 /**
- * Returns the age in planetary orbits as a floating-point number.
- * e.g. 36.47 means 36 full orbits completed, 47% through the next.
+ * Returns the age in planetary orbits (or calendar years for Earth).
  */
 export function getOrbitalAge(birthday: Dayjs, orbitalPeriod: number): number {
   const daysLived = dayjs().diff(birthday, 'day')
@@ -11,12 +10,23 @@ export function getOrbitalAge(birthday: Dayjs, orbitalPeriod: number): number {
 }
 
 /**
- * Returns the date of the next planetary birthday (next completed orbit).
- * Guaranteed to be today or in the future — the loop handles rounding edge
- * cases where Math.round can place the date in the past.
+ * Returns the next planetary birthday.
+ *
+ * - Earth (calendarBirthday=true): uses the calendar anniversary (same month/day)
+ *   so the date is always exact — no drift from the 365.25 approximation.
+ * - Other planets: orbit-based. The loop ensures the result is today or future,
+ *   guarding against off-by-one from Math.round edge cases.
  */
-export function getNextBirthday(birthday: Dayjs, orbitalPeriod: number): Dayjs {
+export function getNextBirthday(birthday: Dayjs, orbitalPeriod: number, calendarBirthday: boolean): Dayjs {
   const today = dayjs()
+
+  if (calendarBirthday) {
+    const thisYear = today.year()
+    const candidate = birthday.year(thisYear)
+    // If this year's anniversary already passed, return next year's
+    return candidate.isBefore(today, 'day') ? birthday.year(thisYear + 1) : candidate
+  }
+
   const daysLived = today.diff(birthday, 'day')
   let orbit = Math.floor(daysLived / orbitalPeriod)
 
@@ -29,7 +39,44 @@ export function getNextBirthday(birthday: Dayjs, orbitalPeriod: number): Dayjs {
   return next
 }
 
-/** Human-readable countdown to a future date. */
+/**
+ * Returns the next `limit` future birthdays, capped at `maxFutureYears` from today.
+ */
+export function getFutureBirthdays(
+  birthday: Dayjs,
+  orbitalPeriod: number,
+  calendarBirthday: boolean,
+  limit: number,
+  maxFutureYears = 120,
+): Dayjs[] {
+  const today = dayjs()
+
+  if (calendarBirthday) {
+    const results: Dayjs[] = []
+    let year = today.year()
+    while (results.length < limit && year <= today.year() + maxFutureYears) {
+      const candidate = birthday.year(year)
+      if (!candidate.isBefore(today, 'day')) results.push(candidate)
+      year++
+    }
+    return results
+  }
+
+  const cutoff = today.add(maxFutureYears * 365, 'day')
+  const daysLived = today.diff(birthday, 'day')
+  let orbit = Math.floor(daysLived / orbitalPeriod)
+
+  const results: Dayjs[] = []
+  while (results.length < limit) {
+    orbit++
+    const next = birthday.add(Math.round(orbit * orbitalPeriod), 'day')
+    if (next.isAfter(cutoff)) break
+    if (!next.isBefore(today, 'day')) results.push(next)
+  }
+  return results
+}
+
+/** Human-readable countdown from today to a future date. */
 export function formatCountdown(daysUntil: number): string {
   if (daysUntil === 0) return 'today!'
   if (daysUntil === 1) return 'tomorrow'
