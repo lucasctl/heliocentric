@@ -1,60 +1,72 @@
 import './style.css'
-import typescriptLogo from './assets/typescript.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import { setupCounter } from './counter.ts'
+import dayjs from 'dayjs'
+
+const PLANETS = [
+  { name: 'Mercury', orbitalPeriod: 87.97 },
+  { name: 'Venus', orbitalPeriod: 224.7 },
+  { name: 'Earth', orbitalPeriod: 365.25 },
+  { name: 'Mars', orbitalPeriod: 686.97 },
+  { name: 'Jupiter', orbitalPeriod: 4332.59 },
+  { name: 'Saturn', orbitalPeriod: 10759.22 },
+  { name: 'Uranus', orbitalPeriod: 30688.5 },
+  { name: 'Neptune', orbitalPeriod: 60182.0 },
+]
+
+function getNextBirthday(
+  birthday: dayjs.Dayjs,
+  orbitalPeriod: number,
+): dayjs.Dayjs {
+  const today = dayjs()
+  const daysLived = today.diff(birthday, 'day')
+  const completedOrbits = Math.floor(daysLived / orbitalPeriod)
+  const nextOrbitDay = (completedOrbits + 1) * orbitalPeriod
+  return birthday.add(Math.round(nextOrbitDay), 'day')
+}
+
+function render(birthday: dayjs.Dayjs) {
+  const today = dayjs()
+  const daysLived = today.diff(birthday, 'day')
+
+  const rows = PLANETS.map((planet) => {
+    const age = (daysLived / planet.orbitalPeriod).toFixed(2)
+    const next = getNextBirthday(birthday, planet.orbitalPeriod).format(
+      'MMM D, YYYY',
+    )
+    return `
+      <tr>
+        <td>${planet.name}</td>
+        <td>${age}</td>
+        <td>${next}</td>
+      </tr>`
+  }).join('')
+
+  document.querySelector<HTMLElement>('#results')!.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Planet</th>
+          <th>Your age</th>
+          <th>Next birthday</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `
+}
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-<section id="center">
-  <div class="hero">
-    <img src="${heroImg}" class="base" width="170" height="179">
-    <img src="${typescriptLogo}" class="framework" alt="TypeScript logo"/>
-    <img src=${viteLogo} class="vite" alt="Vite logo" />
-  </div>
-  <div>
-    <h1>Get started</h1>
-    <p>Edit <code>src/main.ts</code> and save to test <code>HMR</code></p>
-  </div>
-  <button id="counter" type="button" class="counter"></button>
-</section>
-
-<div class="ticks"></div>
-
-<section id="next-steps">
-  <div id="docs">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#documentation-icon"></use></svg>
-    <h2>Documentation</h2>
-    <p>Your questions, answered</p>
-    <ul>
-      <li>
-        <a href="https://vite.dev/" target="_blank">
-          <img class="logo" src=${viteLogo} alt="" />
-          Explore Vite
-        </a>
-      </li>
-      <li>
-        <a href="https://www.typescriptlang.org" target="_blank">
-          <img class="button-icon" src="${typescriptLogo}" alt="">
-          Learn more
-        </a>
-      </li>
-    </ul>
-  </div>
-  <div id="social">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#social-icon"></use></svg>
-    <h2>Connect with us</h2>
-    <p>Join the Vite community</p>
-    <ul>
-      <li><a href="https://github.com/vitejs/vite" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#github-icon"></use></svg>GitHub</a></li>
-      <li><a href="https://chat.vite.dev/" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#discord-icon"></use></svg>Discord</a></li>
-      <li><a href="https://x.com/vite_js" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#x-icon"></use></svg>X.com</a></li>
-      <li><a href="https://bsky.app/profile/vite.dev" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#bluesky-icon"></use></svg>Bluesky</a></li>
-    </ul>
-  </div>
-</section>
-
-<div class="ticks"></div>
-<section id="spacer"></section>
+  <main>
+    <h1>Heliocentric</h1>
+    <p>Enter your birthday to see how old you are on every planet.</p>
+    <label for="birthday">Birthday</label>
+    <input type="date" id="birthday" max="${dayjs().format('YYYY-MM-DD')}" />
+    <div id="results"></div>
+  </main>
 `
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+document
+  .querySelector<HTMLInputElement>('#birthday')!
+  .addEventListener('change', (e) => {
+    const value = (e.target as HTMLInputElement).value
+    if (value) render(dayjs(value))
+  })
